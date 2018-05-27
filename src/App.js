@@ -44,7 +44,7 @@ import * as laneActions from './actions/lanes';
       userSelect: 'none',
       padding: grid * 2,
       margin: `0 0 ${grid}px 0`,
-  
+      borderRadius: "10px",
       // change background colour if dragging
       background: isDragging ? 'lightgreen' : 'grey',
   
@@ -57,9 +57,9 @@ import * as laneActions from './actions/lanes';
     userSelect: 'none',
     padding: grid * 2,
     margin: `0 5px ${grid}px 5px`,
-
+    borderRadius: "15px",
     // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'green',
+    background: isDragging ? 'lightgreen' : 'grey',
 
     // styles we need to apply on draggables
     ...draggableStyle
@@ -68,6 +68,7 @@ import * as laneActions from './actions/lanes';
   const getListStyle = isDraggingOver => ({
       background: isDraggingOver ? 'lightblue' : 'lightgrey',
       padding: grid,
+      borderRadius: "10px",
       width: 250
   });
 
@@ -264,8 +265,8 @@ import * as laneActions from './actions/lanes';
                                               )}>
                                               {<div>
                                                 <Button circular icon='remove' onClick={removeCard.bind(this, lane.id,item.id, lanes)}/>
-                                                <h3>{item.title}</h3>
-                                                <p>{item.description}</p>
+                                                <h2>{item.title}</h2>
+                                                <p className="cards_text">{item.description}</p>
                                                 <Popup  trigger={<Button circular  icon='edit' />} position="right center">
                                                     <Card.Content>
                                                         <Card.Header>
