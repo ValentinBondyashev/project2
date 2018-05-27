@@ -3,3 +3,13 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+#root {
+  display: flex;
+  justify-content: start;
+}
+
+.lane_header{
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}

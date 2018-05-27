@@ -1,67 +1,127 @@
+import update from 'immutability-helper';
+
 const initialState = {
 	lanes: [
-		{
-		  id: 0,
-		  title: 'Planned Tasks',
-		  cards:
-		   [
-			   	{id: 0, title: 'Write Blog', description: 'Can AI make memes'},
-				{id: 1, title: 'Pay Rent', description: 'Transfer via NEFT'},
-				{id: 2, title: 'Pay Rent', description: 'Transfer via NEFT'},],
-			add: true
-		},
-		{
-		  id: 1,
-		  title: 'Completed',
-		  cards: 
-		  	[
-				{id: 0, title: 'Write Blog', description: 'Can AI make memes'},
-				  {id: 1, title: 'Pay Rent', description: 'Transfer via NEFT'},],
-			add: true
-		},
-		{
-			id: 2,
-			title: 'Completed',
-			cards: 
-				[
-				  {id: 0, title: 'Write Blog', description: 'Can AI make memes'},
-				  {id: 1, title: 'Pay Rent', description: 'Transfer via NEFT'},],
-			add: true
-		},
-		
-		
+		{id: "0",
+            title: 'Your task',
+            cards: []}
 	  ],
-
 }
-
+let id = 0;
+let cardId = 0;
 export default (state = initialState, action) => {
-	
 	switch (action.type) {
 		case 'ADD_LANE':
+
+		id++;
+        const newLane = {
+            id: `${id}`,
+            title: 'Your task',
+            cards: []
+        }; 
 			return {
 				...state,
-				lanes: [...state.lanes,action.payload],
-				add: false
+				lanes: [...state.lanes,newLane],			
 		};
-	case 'REMOVE_CARD':
-	console.log(state.lanes[action.payload.id].cards.filter( o => o.id !== action.payload.i))
-	console.log(state.lanes.filter( o => o.id !== action.payload.id))
-			return {
-				...state,
-				lanes: [state.lanes.filter( o => o.id !== action.payload.id),
-					state.lanes[action.payload.id].cards.filter( o => o.id !== action.payload.i)]
-		};  
-	case 'REMOVE_LANE':
-			return {
-				...state,
-				lanes: state.lanes.filter( o => o.id !== action.payload),
-	    };  
-	case 'CHANGE_TITLE':
-			return {
-				...state,
-				cards: state.cards.description = action.payload
-	    };  
-	  default:
-	}
-	return state;
+		case 'ADD_CARD':
+		let num = action.payload.laneId;
+		cardId++
+		return {
+			...state,
+			lanes: update(state.lanes,{
+				[num]:{cards:{$push: [{id:`lane${cardId}`,
+										title: action.payload.head,
+										description: action.payload.task}] }}
+			})
+		};
+		case 'REMOVE_CARD':
+		let indexRC = action.payload.lanes.map((item, index)=>{
+			if(item.id == action.payload.id){
+				return index;
+			}
+		})
+		let indexLaneRC = indexRC.filter(o => Number(o) ===  o);
+		let IndexLRC = indexLaneRC[0];
+		let arr = state.lanes[IndexLRC].cards.filter( o => o.id !== action.payload.i);
+				return {
+					...state,
+					lanes: update(state.lanes,{
+						[indexLaneRC[0]]:{cards:{$set: arr}}
+					})
+					
+			};  
+		case 'REMOVE_LANE':
+				return {
+					...state,
+					lanes:state.lanes.filter( o => o.id !== action.payload),
+				};  
+		case 'CHANGE_CARD':
+			let indexCC = action.payload.lanes.map((item, index)=>{
+				if(item.id == action.payload.laneId){
+					return index;
+				}
+			})
+			let indexLaneCC = indexCC.filter(o => Number(o) ===  o);
+				return {
+					...state,
+					lanes: update(state.lanes,{
+						[indexLaneCC[0]]:{cards:{[action.payload.id]:{$set: {id:action.payload.cardId,
+															title: action.payload.head,
+															description: action.payload.text}}}}
+					})
+				};  
+		case 'CHANGE_NAME_LANE':
+				return{
+					...state,
+					lanes: update(state.lanes,{
+						[action.payload.laneId]: { title: {$set: action.payload.head } }
+					})
+				}
+		case 'CHANGE_TWO_LANE':
+			let indexCTL = action.payload.lanes.map((item, index)=>{
+					if(item.id == action.payload.laneId){
+						return index;
+					}
+				})
+			let indexLaneCTL = indexCTL.filter(o => Number(o) ===  o);
+			let indexCTLS = action.payload.lanes.map((item, index)=>{
+					if(item.id == action.payload.laneSecondId){
+						return index;
+					}
+				})
+			let indexLaneCTLS = indexCTLS.filter(o => Number(o) ===  o);
+			console.log(indexLaneCTL[0],action.payload.listCards,indexLaneCTLS[0],action.payload.listSecondCards)
+				return{
+					...state,
+					lanes: update(state.lanes,{
+						[indexLaneCTL[0]]: {cards: {$set: action.payload.listCards} }
+						,[indexLaneCTLS[0]]: {cards: {$set: action.payload.listSecondCards} }
+					}
+					)
+				}		
+		case 'CHANGE_LANE':
+				let indexCL = action.payload.lanes.map((item, index)=>{
+					if(item.id == action.payload.laneId){
+						return index;
+					}
+				})
+				let indexLaneCL = indexCL.filter(o => Number(o) ===  o);
+				let indexN = indexLaneCL[0];
+				return{
+					...state,
+					lanes: update(state.lanes,{
+						[indexN]: {cards: {$set: action.payload.listCards} }
+					})
+				}
+		case 'MOVE_LANE':
+				return{
+					...state,
+					lanes: update(state.lanes,{
+						$set: action.payload.items
+						
+					}),	
+				}
+			default:
+		}
+		return state;
 };
